@@ -1,0 +1,13 @@
+.cache
+
+build
+
+lib
+
+bin
+
+*.out
+*.so
+*.a
+*.swp
+*.log
