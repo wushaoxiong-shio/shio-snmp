@@ -1,10 +1,11 @@
 #include <iostream>
 
-using namespace std;
+#include "../snmp/include/Loger.h"
 
 int main(int argc, char *argv[])
 {
-    cout << "SHIO TEST__" << endl;
-    cout << "argv: " << argv[0] << endl;
+    LOG("temp");
+    LOG("shio");
+
     return 0;
 }
