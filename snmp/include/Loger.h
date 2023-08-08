@@ -10,7 +10,7 @@
 #define LOG(X) \
     do \
     {\
-        shio::Loger::getLogerptr()->log(X);\
+        shio::Loger::getLogerptr()->log(X, __FILE__, __LINE__, __FUNCTION__);\
     }\
     while(0)
 
@@ -62,11 +62,23 @@ public:
         return SingletonPtr;
     }
 
-    void log(const char *logstr);
+    void log(const char *logstr, std::string filename, int line, std::string func);
 
     void loadconfig();
 
     void reopen();
+
+    void gettime();
+
+    void getlevelstr();
+
+    void gettid();
+
+    void getfilename();
+
+    void getline();
+
+    void getfunction();
 
 private:
     Loger();
@@ -75,9 +87,16 @@ private:
     Loger& operator=(const Loger&) = delete;
     Loger& operator=(const Loger&&) = delete;
 
+    std::string filename;
+    int line;
+    std::string func;
+
     std::string Level;
-    std::string logfile;
-    std::string format;
+    std::string FiledDrectory;
+    std::string FilePrefix;
+    std::string Format;
+    unsigned int MaxSize;
+    static std::stringstream sstream;
     static std::ofstream fstream;
 
 };
