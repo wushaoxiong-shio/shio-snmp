@@ -2,8 +2,8 @@
     "Log": {
         "Level": "INFO",
         "FiledDrectory": "/root/code/shio-snmp/log/",
-        "FilePrefix": "snmp",
-        "Format": "%d%t%m",
-        "MaxSize": 1
+        "FilePrefix": "snmp-",
+        "Format": "%d{%Y-%m-%d %H:%M:%S}%T%l%T%f:%n%T%m",
+        "MaxSize": 10
     }
 }

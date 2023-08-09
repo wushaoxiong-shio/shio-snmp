@@ -2,10 +2,13 @@
 
 #include <iostream>
 #include <fstream>
+#include <map>
 #include <memory.h>
 #include <string>
 #include <thread>
+#include <functional>
 #include <mutex>
+#include <vector>
 
 #define LOG(X) \
     do \
@@ -68,6 +71,8 @@ public:
 
     void reopen();
 
+    void getlogstr();
+
     void gettime();
 
     void getlevelstr();
@@ -80,6 +85,16 @@ public:
 
     void getfunction();
 
+    void splicefilename();
+
+    void parselogformat();
+
+    void gettab();
+
+    void getnewline();
+
+    void getspace();
+
 private:
     Loger();
     ~Loger();
@@ -90,14 +105,19 @@ private:
     std::string filename;
     int line;
     std::string func;
-
+    std::string logstr;
     std::string Level;
     std::string FiledDrectory;
     std::string FilePrefix;
     std::string Format;
+    std::string logfilename;
+    std::string logtimeformat;
     unsigned int MaxSize;
     static std::stringstream sstream;
     static std::ofstream fstream;
+
+    std::vector<std::function<void()>> Logformat;
+    std::map<char, std::function<void()>> formatfunc;
 
 };
 

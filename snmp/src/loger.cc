@@ -92,11 +92,12 @@ Loger::~Loger()
         fstream.close();
 }
 
-void Loger::log(const char *logstr, std::string filename, int line, std::string func)
+void Loger::log(const char *str, std::string filename, int line, std::string func)
 {
     this->filename = filename;
     this->line = line;
     this->func = func;
+    this->logstr = str;
 
     gettime();
     getlevelstr();
@@ -104,8 +105,7 @@ void Loger::log(const char *logstr, std::string filename, int line, std::string 
     getfilename();
     getline();
     getfunction();
-
-    sstream << logstr;
+    getlogstr();
 
     std::cout << sstream.str() << std::endl;
     fstream << sstream.str() << std::endl;
@@ -131,6 +131,21 @@ void Loger::loadconfig()
     FilePrefix = data["Log"]["FilePrefix"];
     Format = data["Log"]["Format"];
     MaxSize = data["Log"]["MaxSize"];
+
+    formatfunc =
+    {
+        {'l', std::bind(&Loger::getlevelstr, this)},
+        {'m', std::bind(&Loger::getlogstr, this)},
+        {'t', std::bind(&Loger::gettid, this)},
+        {'l', std::bind(&Loger::getline, this)},
+        {'u', std::bind(&Loger::getfunction, this)},
+        {'f', std::bind(&Loger::getfilename, this)},
+        {'d', std::bind(&Loger::gettime, this)},
+        {'T', std::bind(&Loger::gettab, this)},
+        {'n', std::bind(&Loger::getnewline, this)},
+        {' ', std::bind(&Loger::getspace, this)}
+
+    };
 }
 
 void Loger::reopen()
@@ -138,9 +153,33 @@ void Loger::reopen()
     if (fstream.is_open())
         fstream.close();
     
-    std::string dir = Dirname("/root/code/shio-snmp/log/shio.log");
-    Mkdir(dir);
-    fstream.open("/root/code/shio-snmp/log/shio.log", std::ios::app);
+    splicefilename();
+    Mkdir(FiledDrectory);
+    fstream.open(logfilename, std::ios::app);
+}
+
+void Loger::parselogformat()
+{
+    // for (int i=0; i<Format.size(); i++)
+    // {
+        
+    // }
+}
+
+void Loger::splicefilename()
+{
+    time_t ts = time(0);
+    struct tm mt;
+    localtime_r(&ts, &mt);
+    char buf[32];
+    strftime(buf, 32, "%Y-%m-%d", &mt);
+    std::string te = buf;
+    logfilename = FiledDrectory + FilePrefix + te + ".log";
+}
+
+void Loger::getlogstr()
+{
+    sstream << logstr;
 }
 
 void Loger::gettime()
@@ -148,36 +187,50 @@ void Loger::gettime()
     time_t ts = time(0);
     struct tm mt;
     localtime_r(&ts, &mt);
-    char buf[64];
-    strftime(buf, 32, "%Y-%m-%d %H:%M:%S ", &mt);
+    char buf[32];
+    strftime(buf, 32, "%Y-%m-%d %H:%M:%S", &mt);
     sstream << buf;
 }
 
 void Loger::getlevelstr()
 {
-    sstream << Level << " ";
+    sstream << Level;
 }
 
 void Loger::gettid()
 {
-	sstream << syscall(SYS_gettid) << " ";
+	sstream << syscall(SYS_gettid);
 }
 
 void Loger::getfilename()
 {
     filename = filename.substr(filename.find_last_of('/') + 1);
-    sstream << filename << ":";
+    sstream << filename;
 }
 
 void Loger::getline()
 {
-    sstream << line << " ";
+    sstream << line;
 }
 
 void Loger::getfunction()
 {
-    sstream << func << " ";
+    sstream << func;
 }
 
+void Loger::gettab()
+{
+    sstream << "\t";
+}
+
+void Loger::getnewline()
+{
+    sstream << "\n";
+}
+
+void Loger::getspace()
+{
+    sstream << " ";
+}
 
 };
